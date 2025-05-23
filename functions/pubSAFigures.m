@@ -11,7 +11,7 @@ for rt = 1:length(runType)
     if runType(rt) == 'ER'
         titles = {'Self-Administration', 'Session 15', 'Extinction', 'Reinstatement'}; % titles of subplots 1-4 for each figure
     elseif runType(rt) == 'BE'
-        titles = {'Self-Administration', 'Session 15', 'Behavioral Economics', 'Retraining'};
+        titles = {'Self-Administration', 'Session 15', 'Behavioral Economics'};
     elseif runType(rt) == 'SA'
         titles = {'Self-Administration', 'Session 15'};
     end
@@ -349,9 +349,8 @@ function [g] = plotPubFig(pT, runType, yVar, yLab, forceY, cVar, subInd, titles,
     elseif runType == 'BE'
         sp_subInd = {subInd & (pT.sessionType=='PreTraining' | pT.sessionType=='Training'), ...
             subInd & (pT.sessionType=='PreTraining' | pT.sessionType=='Training') & pT.Session>14, ...
-            subInd & (pT.sessionType=='BehavioralEconomics'), ...
-            subInd & (pT.sessionType=='ReTraining')};
-        xLim = {[0, 15.5], [0.5 2.5], [15.5 20.5], [0.5 2.5]};
+            subInd & (pT.sessionType=='BehavioralEconomics')};
+        xLim = {[0, 15.5], [0.5 2.5], [15.5 20.5]};
     elseif runType == 'SA'
         sp_subInd = {subInd & (pT.sessionType=='PreTraining' | pT.sessionType=='Training'), ...
             subInd & (pT.sessionType=='PreTraining' | pT.sessionType=='Training') & pT.Session>14};
@@ -413,9 +412,7 @@ function [g] = plotPubFig(pT, runType, yVar, yLab, forceY, cVar, subInd, titles,
        yMax=forceY;
     end
     
-    for sp = 1:length(sp_subInd)
-        %g(1,sp).axe_property('LineWidth', 1.5, 'XLim', xLim{sp}, 'YLim', [0 yMax(sp)], 'TickDir','out');
-    
+    for sp = 1:length(sp_subInd)    
         % Title
         set(g(1,sp).title_axe_handle.Children ,'FontSize',12);
     
@@ -486,12 +483,13 @@ function [g] = plotPubFig(pT, runType, yVar, yLab, forceY, cVar, subInd, titles,
 
     if length(sp_subInd) > 2
         % Remove & Move Axes
-        set(g(1,4).facet_axes_handles,'YColor',[1 1 1]);
-        set(g(1,4).facet_axes_handles,'YLabel',[],'YTick',[]);
         pos5=g(1,3).facet_axes_handles.OuterPosition;
         set(g(1,3).facet_axes_handles,'OuterPosition',[pos5(1),pos5(2),pos5(3)-.065,pos5(4)]);
         pos6=g(1,3).title_axe_handle.OuterPosition;
         set(g(1,3).title_axe_handle,'OuterPosition',[pos6(1)-.035,pos6(2),pos6(3),pos6(4)]);
+        if length(sp_subInd) > 3
+        set(g(1,4).facet_axes_handles,'YColor',[1 1 1]);
+        set(g(1,4).facet_axes_handles,'YLabel',[],'YTick',[]);
         if height(g(1, 2).results.geom_jitter_handle)==4
             pos3=g(1,4).facet_axes_handles.OuterPosition;
             set(g(1,4).facet_axes_handles,'OuterPosition',[pos3(1)-.09,pos3(2),pos3(3)-.04,pos3(4)]);
@@ -502,6 +500,7 @@ function [g] = plotPubFig(pT, runType, yVar, yLab, forceY, cVar, subInd, titles,
             set(g(1,4).facet_axes_handles,'OuterPosition',[pos3(1)-.08,pos3(2),pos3(3)-.11,pos3(4)]);
             pos4=g(1,4).title_axe_handle.OuterPosition;
             set(g(1,4).title_axe_handle,'OuterPosition',[pos4(1)-.135,pos4(2),pos4(3),pos4(4)]);
+        end
         end
     end
 
