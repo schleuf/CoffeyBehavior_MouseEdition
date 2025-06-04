@@ -24,7 +24,7 @@ experimentKey_flnm = '.\Experiment Key.xlsx'; % Key for
 
 % MISC. SETTINGS
 runNum = '1_2_3_4_6'; % options: 'all' or desired runs separated by underscores (e.g. '1', '1_3_4', '3_2')
-runType = 'all'; % options: 'ER' (Extinction Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration)
+runType = 'ER'; % options: 'ER' (Extinction Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration)
 createNewMasterTable = true; % true: generates & saves a new master table from medPC files in datapath. false: reads mT in from masterTable_flnm if set to false, otherwise 
 firstHour = true; % true: acquire data from the first-hour of data and analyze in addition to the full sessions
 excludeData = true; % true: excludes data based on the 'RemoveSession' column of masterSheet
@@ -43,7 +43,7 @@ run_individualSusceptibility_analysis = true;
 saveTabs = true; % true: save matlab tables of analyzed datasets
 dailyFigs = false; % true: generate daily figures from dailySAFigures.m
 pubFigs = true; % true: generate publication figures from pubSAFigures.m
-indivIntake_figs = true; % true: generate figures for individual animal behavior across & within sessions
+indivIntake_figs = false; % true: generate figures for individual animal behavior across & within sessions
 groupIntake_figs = true; % true: generate figures grouped by sex, strain, etc. for animal behavior across & within sessions
 groupOralFentOutput_figs = true; % true: generate severity figures
 figsave_type = {'.png','.fig'};

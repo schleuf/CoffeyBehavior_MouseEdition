@@ -97,7 +97,8 @@ function [mT] = createMasterTable(beh_datapath, masterKey_flnm, experimentKey_fl
                     seekLP = arrayfun(@(x) find(actLP < x, 1, 'last'), seekHE, 'UniformOutput', false);
                     seekLP = actLP(unique(cell2mat(seekLP(~cellfun(@isempty, seekLP)))));
                     varTable.allLatency = {seekHE-seekLP};
-                    varTable.Latency = mean(varTable.allLatency{1});
+                    trimLatency=varTable.allLatency{1};
+                    varTable.Latency = mean(trimLatency(trimLatency<360)); % Setting Max Latency to 360s
                 end
                 
                 % Concatenate the Master Table

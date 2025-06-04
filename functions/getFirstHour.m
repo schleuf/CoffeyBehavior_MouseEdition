@@ -84,8 +84,9 @@ function [hmT] = getFirstHour(mT)
         else  
             allLatency{fl} = mT.allLatency{fl}(1:length(rewHE));
         end
-
-        Latency(fl) = mean(allLatency{fl});
+        
+        trimLatency=allLatency{fl};
+        Latency(fl) = mean(trimLatency(trimLatency<360)); % Setting Max Latency to 360s
      
         if mT.TotalInfusions(fl) == 0
             totalIntake(fl) = 0;
