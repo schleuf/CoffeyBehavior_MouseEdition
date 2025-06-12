@@ -7,8 +7,8 @@
 % This is the main analysis script for Golden Oral Fentanyl SA Behavior.
 % ----------------------------------------
 
-%% ------------- BEGIN CODE --------------
-% USER INPUTS
+%% -------------------- BEGIN CODE --------------------
+% --- All User Definable Inputs are in this section ---
 close all
 clear all
 
@@ -24,15 +24,15 @@ experimentKey_flnm = '.\Experiment Key.xlsx'; % Key for
 
 % MISC. SETTINGS
 runNum = '1_2_3_4_6'; % options: 'all' or desired runs separated by underscores (e.g. '1', '1_3_4', '3_2')
-runType = 'ER'; % options: 'ER' (Extinction Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration)
-createNewMasterTable = true; % true: generates & saves a new master table from medPC files in datapath. false: reads mT in from masterTable_flnm if set to false, otherwise 
-firstHour = true; % true: acquire data from the first-hour of data and analyze in addition to the full sessions
+runType = 'All'; % options: 'ER' (Extinction Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration), 'All' (All)
+createNewMasterTable = false; % true: generates & saves a new master table from medPC files in datapath. false: reads mT in from masterTable_flnm if set to false, otherwise 
+firstHour = true; % true: acquire data from the first-hour of data and analyze in addition to the full sessions (Important for camparing behavior to 1h reinstatement session).
 excludeData = true; % true: excludes data based on the 'RemoveSession' column of masterSheet
 acquisition_thresh = 10; % to be labeled as "Acquire", animal must achieve an average number of infusions in the second weak of Training sessions greater than this threshold
 acquisition_testPeriod = {'Training', 'last', 10}; % determines sessions to average infusions across before applying acquisition_thresh. second value can be 'all', 'first', or 'last'. if 'first' or 'last', there should be a 3rd value giving the number of days to average across, or it will default to 1. 
 pAcq = true; % true: plot aquisition histogram to choose threshold 
-interpWeights = false;
-interpWeight_sessions = [1,6,11,16,21];
+interpWeights = false; % true: interpolate daily weights from weekly weights
+interpWeight_sessions = [1,6,11,16,21]; % [sessions with true weights for interpolation]
 
 run_BE_analysis = true;
 run_withinSession_analysis = true;
@@ -46,9 +46,9 @@ pubFigs = true; % true: generate publication figures from pubSAFigures.m
 indivIntake_figs = false; % true: generate figures for individual animal behavior across & within sessions
 groupIntake_figs = true; % true: generate figures grouped by sex, strain, etc. for animal behavior across & within sessions
 groupOralFentOutput_figs = true; % true: generate severity figures
-figsave_type = {'.png','.fig'};
+figsave_type = {'.png','.fig'}; % file types for figure outputs. May be any MATLAB standard image or figure type
 
-% color settings chosen for publication figures. SSnote: haven't been implemented across most figure-generating functions yet. 
+% color settings chosen for publication figures.
 gramm_C57_Sex_colors = {'hue_range',[40 310],'lightness_range',[95 65],'chroma_range',[50 90]};
 gramm_CD1_Sex_colors = {'hue_range',[85 -200],'lightness_range',[85 75],'chroma_range',[75 90]};
 gramm_Strain_Acq_colors = {'hue_range',[25 385],'lightness_range',[95 60],'chroma_range',[50 70]};
@@ -78,7 +78,7 @@ dt = char(datetime('today')); % Used for Daily & Publication figure savefile nam
 
 runNum = categorical(string(runNum));
 runType = categorical(string(runType));
-if runType == 'all'
+if runType == 'All'
     runType = categorical(["ER", "BE", "SA"]);
 end
 
@@ -180,7 +180,6 @@ if dailyFigs
 end
 
 %% Generate Clean Subset of Figures for Publication
-
 if pubFigs %  && strcmp(runType, 'ER')
     pubSAFigures(mT, runType, dex, [sub_dir, pubfigs_savepath], figsave_type);
     if firstHour 
@@ -190,7 +189,6 @@ if pubFigs %  && strcmp(runType, 'ER')
 end
 
 %% Behavioral Economics Analysis 
-
 if any(ismember(runType, 'BE')) && run_BE_analysis
     fig_colors = {[.5,.5,.5], col_F_c57, col_M_c57, col_F_CD1, col_M_CD1};
     BE_processes(mT(dex.BE, :), expKey, BE_intake_canonical_flnm, sub_dir, indivIntake_figs, ...
