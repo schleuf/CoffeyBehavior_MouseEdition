@@ -12,7 +12,7 @@
     <li><a href="#prerequisites">Prerequisites</a></li>
     <li><a href="#installation">Installation</a></li>
     </li>
-    <li><a href="#generate-manuscript-figures">Generate Manuscript Figures</a></li>
+    <li><a href="#generate-raw-manuscript-figures">Generate Raw Manuscript Figures</a></li>
     <li><a href="#implement-in-your-lab">Implement in Your Lab</a></li>
     <ul>
             <li><a href="#hardware-setup">Hardware Setup</a></li>
@@ -38,8 +38,11 @@ Implementation of the full behavioral pipeline requires Med-PC 4.0 or later (Med
 The analysis code has been tested on MATLAB 2024a and later
 
 Required MATLAB Toolboxes:
->I'm Not Sure   
->Something Else
+>Curve Fitting Toolbox™   
+>Statistics and Machine Learning Toolbox™
+
+Required External Packages:
+>https://github.com/piermorel/gramm
 
 ## Installation
 
@@ -50,8 +53,14 @@ This Github Repository can be cloned manually, through GitHub Desktop, or throug
    ```
 
 <!-- USAGE EXAMPLES -->
-## Generate Manuscript Figures
-Fill Me in with information
+## Generate Raw Manuscript Figures
+Open MATLAB and Navigate to the parent directory for this repository
+
+Run:
+
+   ```sh
+   main_MouseSABehavior
+   ```
 
 ## Implement in Your Lab
 ### Hardware Setup
