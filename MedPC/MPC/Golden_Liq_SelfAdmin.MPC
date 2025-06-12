@@ -1,0 +1,398 @@
+\  Originally Liquid Self Administration
+\  Scott Ng-Evans (2014)
+\
+\  03 - 2022 : Edited by Kevin Coffey for use with TDT Fiber photometry
+\              Dose Calculation and Macros also included
+\
+\  01 - 2024 : Edited by Kevin Coffey for Sam Goldem R01. Modified for Sams operant chambers, and allows for use with mice, photometry, ePhys, etc.
+\            : This is Golden_Liq_SelfAdmin.mpc
+\
+\  Outputs
+    ^LeftLevOut     = 1 \ Active Lever - Actually on Right In New 8 Chambers
+    ^RightLevOut    = 2 \ Does Not Exist In New 8 Chambers
+    ^HouseLt        = 3
+    ^HouseLtRed     = 4 \ Does Not Exist In New 8 Chambers
+    ^LeftLevLt      = 5 \ Active Lever Light - Actually on Right In New 8 Chambers
+    ^RightLevLt     = 7 \ Does Not Exist In New 8 Chambers
+    ^Tone           = 6
+    ^LiquidDel      = 8
+    ^Fan            = 16
+\
+\  TTLs
+    ^SessOnTTL      = 10
+\
+\  Inputs
+    ^LeftLevIn        = 1 \ Active Lever - Actually on Right In New Chambers
+    ^RightLevIn       = 2 \ Does Not Exist In Chamber
+    ^InactiveIn       = 3
+    ^HeadEntry        = 4
+\    ^Shape            = 8 \ Shaping Response from Experimenter
+\
+\  Z-pulses
+\   Z1 - Start trial
+\   Z2 - Active press or time up for houselt-only period, begin cue period
+\   Z3 - Liquid delivery finished
+\   K1 - Shaping Pulse
+\
+\   Z17 to Z32 - marks events for TTL outputs
+\     Z17 - Right lever press      - BIT 0
+\     Z18 - Left lever press       - BIT 1
+\     Z19 - Infusion start         - BIT 2
+\     Z20 - Tone onset             - BIT 3
+\     Z21 - Tone offset            - BIT 4
+\     Z22 - Headentry              - BIT 5
+\     Z23 - Right Lev light on     - BIT 6
+\     Z24 - Left Lev light on      - BIT 7
+\     Z25 - Mag light onset        - BIT 8
+\     Z26 - Mag light offset       - BIT 9
+\     Z27 - Inactive Lever Press   - BIT 10
+\     Z29 - House Light on         - BIT 12
+\     Z30 - House Light off        - BIT 13
+\     Z31 - First mag head entry
+\            after lev press       - BIT 14
+\
+\  Event stamps ( array E )
+\   1   = Right Lev press
+\   2   = Left Lev press
+\   3   = Rewarded rt Lev press
+\   4   = Rewarded lt Lev press
+\   5   = Reinforcement delivery
+\   6   = Head entry
+\   7   = Right Lev light on
+\   8   = Left Lev light on
+\   9   = Right Lev light off
+\   10  = Left Lev ight off
+\   11  = Houselight on
+\   12  = Houselight off
+\   13  = Tone on
+\   14  = Tone off
+\   15  = Magazine tray light on
+\   16  = Magazine tray light off
+\   17  = Infusion turns on
+\   18  = Infusion turns off
+\   19  = Timeout ends and/or drug available at START
+\   20  = Rt Lev press during timeout
+\   21  = Lt Lev press during timeout
+\   22  = Active Lev press
+\   23  = Inactive Lev press
+\   24  = Timeout starts
+\   25  = Time-limit to respond reached, non-contingent reward delivery
+\   26  = Right lever extends
+\   27  = Left lever extends
+\   28  = Right lever retracts
+\   29  = Left lever retracts
+\   30  = Experimenter adminstered non-contingent reward delivery
+\   100 = Session termination
+\
+\  Variables
+\   A(0)  = Dummy variable for menu display
+\   A(1)  = Dummy variable for menu display
+\   A(2)  = Session length (min)
+\   A(3)  = Liquid delivery duration (sec)
+\   A(4)  = Lev light delay (sec)
+\   A(5)  = Lev light duration (sec)
+\   A(6)  = Tone delay (sec)
+\   A(7)  = Tone duration (sec)
+\   A(8)  = Mag light delay (sec)
+\   A(9)  = Mag light duration (sec)
+\   A(10) = Active Lev (0:Right 1:Left)
+\   A(11) = Liquid delivery delay (sec)
+\   A(12) = Total timeout duration - time of cues (Levlt, tone, MagLt) when Lev not active
+\   A(13) = Time-limit to respond (sec), after which drug is delivered,
+\            drug is delivered either by contingent Lev press or this timer
+\   A(14) = Animal weight (g)
+\   A(15) = Training Session
+\   A(16) = Maximum Infusions
+\   B(2)  = A(2) converted to system time
+\   B(3)  = A(3) converted to system time
+\   B(4)  = A(4) converted to system time
+\   B(5)  = A(5) converted to system time
+\   B(6)  = A(6) converted to system time
+\   B(7)  = A(7) converted to system time
+\   B(8)  = A(8) converted to system time
+\   B(9)  = A(9) converted to system time
+\   B(11) = A(11) converted to system time
+\   B(12) = A(12) converted to system time
+\   B(13) = A(13) convertde to system time
+\   C(0)  = Infusions
+\   C(1)  = Trial number
+\   C(2)  = Count of right lev presses
+\   C(3)  = Count of left lev presses
+\   C(4)  = Count of head entries
+\   C(5)  = Time of reward presse used in head entry latency calcs
+\   C(6)  = Calculated current head entry latency
+\   C(7)  = Number of latencies used to calculate average head entry latency
+\   C(8)  = Sum of head entry latencies
+\   C(9)  = Current average latency
+\   C(10) = Total active Lev presses
+\   C(11) = Total inactive Lev presses
+\   C(12) = Number of non-contingent reward deliveries
+\   D()   = Trial head entry latency after each reward lev press
+\   E()   = Event stamp array
+\   G     = Event and time stamp counter
+\   H     = Session timer in seconds
+\   T()   = Time stamp array
+
+VAR_ALIAS ------------------------------------------- = A(0)
+VAR_ALIAS Session length (min) = A(2)
+VAR_ALIAS Active Lev (0:Right 1:Left) = A(10)
+VAR_ALIAS Total timeout period (sec) = A(12)
+VAR_ALIAS Time-limit to respond (sec) = A(13)
+VAR_ALIAS Liquid delivery delay (sec) = A(11)
+VAR_ALIAS Liquid delivery duration (sec) = A(3)
+VAR_ALIAS Lev light delay (sec) = A(4)
+VAR_ALIAS Lev light duration (sec) = A(5)
+VAR_ALIAS Tone delay (sec) = A(6)
+VAR_ALIAS Tone duration (sec) = A(7)
+VAR_ALIAS Animal weight (g) = A(14)
+VAR_ALIAS Training Session = A(15)
+\\VAR_ALIAS Mag light delay (sec) = A(8)
+\\VAR_ALIAS Mag light duration (sec) = A(9)
+VAR_ALIAS ------------------------------------------ = A(1)
+\
+DIM A = 20
+DIM B = 20
+DIM C = 20
+DIM D = 5000
+DIM E = 450000
+DIM T = 450000
+\
+S.S.1,     \ Default setup and trial timing
+   S1,
+     0": ON^Fan;
+         SET A(2)  = 180;    \Session length (min)
+         SET A(3)  = 4;      \Liquid delivery duration (sec)
+         SET A(4)  = 0;      \Lev light delay (sec)
+         SET A(5)  = 5;      \Lev light duration (sec)
+         SET A(6)  = 0;      \Tone delay (sec)
+         SET A(7)  = 5;      \Tone duration (sec)
+         SET A(8)  = 0;      \Mag light delay (sec)
+         SET A(9)  = 0;      \Mag light duration (sec)
+         SET A(10) = 1;      \Active Lev (0:Right 1:Left) - WE WILL ALWAYS USE LEFT LEVER, INACTIVE STAYS OUT, DONT WANT THIRD LEVER
+         SET A(11) = 0;      \Liquid delivery delay (sec)
+         SET A(12) = 10;     \Total timeout time - time liquid unavailable (sec)
+         SET A(16) = 320;    \Maximum Infusions before syringe is empty
+         \ SET A(13) = 180;    \Time-limit to respond before drug delivered anyway (sec) MUST BE SET WITH MACRO IF THIS IS OFF
+         SET E(0)  = -987.987, T(0) = -987.987, D(0) = -987.987 ---> S2
+   S2,
+     #START: SET E(G) = 19, T(G) = H; ADD G;
+             SET E(G) = -987.987, T(G) = -987.987; ADD C(1) ---> S3
+   S3,
+     #Z2: SET E(G) = 24, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987;
+          SET B(12) = A(12) * 1" ---> S4
+   S4,
+     B(12)#T: Z1; ADD C(1);
+              SET E(G) = 19, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> S3
+\
+S.S.2,    \ Houselight
+S1,
+  #START!#Z1: OFF^HouseLt; Z29;
+              SET E(G) = 11, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  #Z2: OFF ^HouseLt; Z30;
+       SET E(G) = 12, T(G) = H; ADD G;
+       SET E(G) = -987.987, T(G) = -987.987 ---> SX
+\
+S.S.3,    \ Tone
+S1,
+  #Z2: SET B(6) = A(6) * 1" ---> S2
+S2,
+  B(6)#T: ON ^Tone; Z20; SET B(7) = A(7) * 1";
+          SET E(G) = 13, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S3
+S3,
+  B(7)#T: OFF ^Tone; Z21;
+         SET E(G) = 14, T(G) = H; ADD G;
+         SET E(G) = -987.987, T(G) = -987.987 ---> S1
+\
+S.S.4,    \ Levers extend/retract
+S1,
+  #START: ON ^LeftLevOut; \Old Line: [ON ^RightLeverOut, ^LeftLevOut;]
+          SET E(G) = 26, T(G) = H; ADD G;
+          SET E(G) = 27, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> SX
+\
+S.S.5,    \ Lever lights
+S1,
+  #Z2: IF A(10) = 0 [@RIGHT, @LEFT]
+       @RIGHT: SET B(4) = A(4) * 1" ---> S2
+       @LEFT: SET B(4) = A(4) * 1" ---> S4
+S2,
+  B(4)#T: ON^RightLevLt; Z23; SET B(5) = A(5) * 1";
+          SET E(G) = 7, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S3
+S3,
+  B(5)#T: OFF ^RightLevLt;
+          SET E(G) = 9, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S1
+S4,
+  B(4)#T: ON ^LeftLevLt; Z24; SET B(5) = A(5) * 1";
+          SET E(G) = 8, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S5
+S5,
+  B(5)#T: OFF^LeftLevLt;
+          SET E(G) = 10, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S1
+\
+S.S.7,    \ Liquid delivery
+S1,
+  #Z2: SET B(11) = A(11) * 1" ---> S2
+S2,
+  B(11)#T: ON ^LiquidDel; Z19; ADD C(0);
+           SET B(3) = A(3) * 1";
+           SET E(G) = 5, T(G) = H; ADD G;
+           SET E(G) = 17, T(G) = H; ADD G;
+           SET E(G) = -987.987, T(G) = -987.987 ---> S3
+S3,
+  B(3)#T: OFF ^LiquidDel; Z3;
+          SET E(G) = 18, T(G) = H; ADD G;
+          SET E(G) = -987.987, T(G) = -987.987 ---> S1
+\
+S.S.8,     \ Record Lev presses and non-contingent drug delivery timer
+S1,
+  #START: SET B(13) = A(13) * 1";
+          IF A(10) = 0 [@RIGHT, @LEFT]
+          @RIGHT: ---> S2
+          @LEFT: ---> S3
+S2,
+  1#R^RightLevIn: Z2; Z17; ADD C(2), C(10);
+               SET E(G) = 1, T(G) = H; ADD G;
+               SET E(G) = 3, T(G) = H; ADD G;
+               SET E(G) = 22, T(G) = H; ADD G;
+               SET E(G) = -987.987, T(G) = -987.987 ---> S4
+  1#R^LeftLevIn: Z18; ADD C(3), C(11);
+              SET E(G) = 2, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^InactiveIn: Z27; ADD C(11);
+              SET E(G) = 23, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  B(13)#T: Z2; ADD C(12);
+           SET E(G) = 25, T(G) = H; ADD G;
+           SET E(G) = -987.987, T(G) = -987.987 ---> S4
+
+S3,
+  1#R^LeftLevIn: Z2; Z18; ADD C(3), C(10);
+              SET E(G) = 2, T(G) = H; ADD G;
+              SET E(G) = 4, T(G) = H; ADD G;
+              SET E(G) = 22, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> S5
+  1#R^RightLevIn: Z17; ADD C(2), C(11);
+               SET E(G) = 1, T(G) = H; ADD G;
+               SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^InactiveIn: Z27; ADD C(11);
+              SET E(G) = 23, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  B(13)#T: Z2; ADD C(12);
+           SET E(G) = 25, T(G) = H; ADD G;
+           SET E(G) = -987.987, T(G) = -987.987 ---> S5
+S4,
+  1#R^RightLevIn: Z17; ADD C(2), C(10);
+               SET E(G) = 20, T(G) = H; ADD G;
+               SET E(G) = 22, T(G) = H; ADD G;
+               SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^LeftLevIn: Z18; ADD C(3), C(11);
+              SET E(G) = 21, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^InactiveIn: Z27; ADD C(11);
+              SET E(G) = 23, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  #Z1: IF A(10) = 0 [@RIGHT, @LEFT]
+       @RIGHT: ---> S2
+       @LEFT: ---> S3
+S5,
+  1#R^RightLevIn: Z17; ADD C(2), C(11);
+               SET E(G) = 20, T(G) = H; ADD G;
+               SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^LeftLevIn: Z18; ADD C(3), C(10);
+              SET E(G) = 21, T(G) = H; ADD G;
+              SET E(G) = 22, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  1#R^InactiveIn: Z27; ADD C(11);
+              SET E(G) = 23, T(G) = H; ADD G;
+              SET E(G) = -987.987, T(G) = -987.987 ---> SX
+  #Z1: IF A(10) = 0 [@RIGHT, @LEFT]
+       @RIGHT: ---> S2
+       @LEFT: ---> S3
+\
+S.S.9,    \ Record head entries
+S1,
+  #START: ---> S2
+S2,
+  1#R^HeadEntry: Z22; ADD C(4);
+                 SET E(G) = 6, T(G) = H; ADD G;
+                 SET E(G) = -987.987, T(G) = -987.987 ---> SX
+\
+S.S.10,    \ Latency calculations
+S1,
+  #START: ---> S2
+S2,
+  #Z2: SET C(5) = H ---> S3
+S3,
+  1#R^HeadEntry: Z31; SET C(6) = H - C(5), D(C(7)) = C(6); ADD C(7);
+                 SET C(8) =  C(8) + C(6);
+                 SET C(9) = C(8)/C(7);
+                 SET D(C(7)) = -987.987 ---> S2   \calc average - total latencies over number of latencies recorded
+  #Z2: SET C(5) = H;
+       IF D(C(7)) = 0 [@NOHEFORTRIAL, @HEFORTRIAL]
+       @NOHEFORTRIAL: SET D(C(7)) = -1; ADD C(7);
+                      SET D(C(7)) = -987.987 ---> SX
+       @HEFORTRIAL: ---> SX
+\
+S.S.11,    \ Display
+S1,
+  #START: ---> S2
+S2,
+  0.1": SHOW 1, Tot Active presses: , C(10);
+        SHOW 2, Tot Inactive presses: , C(11);
+        SHOW 3, Trial#: , C(1);
+        SHOW 4, Infusions: , C(0);
+        SHOW 5, Head Entries: , C(4);
+        SHOW 6, Avg latency: , C(9);
+        SHOW 8, Tot non-cont rewards: , C(12) ---> S2
+\
+S.S.12,    \ Session timing and termination
+S1,
+  #START: ---> S2
+S2,
+  0.01": SET H = H + 0.01;
+         IF H > (A(2)*60) [@END, @CONTINUE]
+         @END: SHOW 1, Tot Rt presses: , C(2);
+               SHOW 2, Tot Lt presses: , C(3);
+               SHOW 3, Trial# :, C(1);
+               SHOW 4, Infusions: , C(0);
+               SHOW 5, Head Entries: , C(4);
+               SHOW 6, Avg latency: , C(9);
+               SHOW 11, Tot Active presses: , C(10);
+               SHOW 12, Tot Inactive presses: , C(11);
+               SHOW 13, Tot non-cont rewards: , C(12);
+               SET E(G) = 100, T(G) = H;
+               SET E(G+1) = -987.987, T(G+1) = -987.987, D(C(7)) = -987.987 ---> STOPABORTFLUSH
+          @CONTINUE: ---> S2
+\
+S.S.13,    \ Max Infusion Session End
+S1,
+  #START: ---> S2
+S2,
+  0.01": IF C(1) > A(16) [@END, @CONTINUE]
+                 @END: SHOW 1, Tot Rt presses: , C(2);
+                       SHOW 2, Tot Lt presses: , C(3);
+                       SHOW 3, Trial# :, C(1);
+                       SHOW 4, Infusions: , C(0);
+                       SHOW 5, Head Entries: , C(4);
+                       SHOW 6, Avg latency: , C(9);
+                       SHOW 11, Tot Active presses: , C(10);
+                       SHOW 12, Tot Inactive presses: , C(11);
+                       SHOW 13, Tot non-cont rewards: , C(12);
+                       SET E(G) = 100, T(G) = H;
+                       SET E(G+1) = -987.987, T(G+1) = -987.987, D(C(7)) = -987.987 ---> STOPABORTFLUSH
+                  @CONTINUE: ---> S2
+
+S.S.14,    \ Shaping-Pulse
+S1,
+  #START: ---> S2
+S2,
+  1#K1: Z2; ADD C(12);
+           SET E(G) = 30, T(G) = H; ADD G;
+           SET E(G) = -987.987, T(G) = -987.987 ---> S2

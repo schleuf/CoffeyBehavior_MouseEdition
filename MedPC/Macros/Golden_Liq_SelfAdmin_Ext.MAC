@@ -1,0 +1,74 @@
+/ Macro to run KC_Liq_SelfAdmin_Ext
+/ Chambers 9-16 are used for 8 subjects
+
+TEXTINPUTBOX "Subject in Box 9" "Enter Subject ID:" "R4" %SubB9 
+NUMERICINPUTBOX "Weight for Box 9" "Enter weight (grams):" "262" %WeightB9 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB9 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB9
+LOAD BOX 9 SUBJ %SubB9 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB9 MAINBOX 9 BOXES 9
+SET A(14) VALUE %WeightB9 MAINBOX 9 BOXES 9
+SET A(15) VALUE %SessionB9 MAINBOX 9 BOXES 9
+
+TEXTINPUTBOX "Subject in Box 10" "Enter Subject ID:" "R8" %SubB10 
+NUMERICINPUTBOX "Weight for Box 10" "Enter weight (grams):" "465" %WeightB10 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB10 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB10
+LOAD BOX 10 SUBJ %SubB10 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB10 MAINBOX 10 BOXES 10
+SET A(14) VALUE %WeightB10 MAINBOX 10 BOXES 10
+SET A(15) VALUE %SessionB10 MAINBOX 10 BOXES 10
+
+TEXTINPUTBOX "Subject in Box 11" "Enter Subject ID:" "R1" %SubB11 
+NUMERICINPUTBOX "Weight for Box 11" "Enter weight (grams):" "254" %WeightB11 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB11 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB11
+LOAD BOX 11 SUBJ %SubB11 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB11 MAINBOX 11 BOXES 11
+SET A(14) VALUE %WeightB11 MAINBOX 11 BOXES 11
+SET A(15) VALUE %SessionB11 MAINBOX 11 BOXES 11
+
+TEXTINPUTBOX "Subject in Box 12" "Enter Subject ID:" "R5" %SubB12 
+NUMERICINPUTBOX "Weight for Box 12" "Enter weight (grams):" "445" %WeightB12 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB12 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB12
+LOAD BOX 12 SUBJ %SubB12 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB12 MAINBOX 12 BOXES 12
+SET A(14) VALUE %WeightB12 MAINBOX 12 BOXES 12
+SET A(15) VALUE %SessionB12 MAINBOX 12 BOXES 12
+
+TEXTINPUTBOX "Subject in Box 13" "Enter Subject ID:" "R2" %SubB13 
+NUMERICINPUTBOX "Weight for Box 13" "Enter weight (grams):" "294" %WeightB13 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB13 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB13
+LOAD BOX 13 SUBJ %SubB13 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB13 MAINBOX 13 BOXES 13
+SET A(14) VALUE %WeightB13 MAINBOX 13 BOXES 13
+SET A(15) VALUE %SessionB13 MAINBOX 13 BOXES 13
+
+TEXTINPUTBOX "Subject in Box 14" "Enter Subject ID:" "R6" %SubB14 
+NUMERICINPUTBOX "Weight for Box 14" "Enter weight (grams):" "448" %WeightB14 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB14 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB14
+LOAD BOX 14 SUBJ %SubB14 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB14 MAINBOX 14 BOXES 14
+SET A(14) VALUE %WeightB14 MAINBOX 14 BOXES 14
+SET A(15) VALUE %SessionB14 MAINBOX 14 BOXES 14
+
+TEXTINPUTBOX "Subject in Box 15" "Enter Subject ID:" "R3" %SubB15 
+NUMERICINPUTBOX "Weight for Box 15" "Enter weight (grams):" "270" %WeightB15 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB15 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB15
+LOAD BOX 15 SUBJ %SubB15 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB15 MAINBOX 15 BOXES 15
+SET A(14) VALUE %WeightB15 MAINBOX 15 BOXES 15
+SET A(15) VALUE %SessionB15 MAINBOX 15 BOXES 15
+
+TEXTINPUTBOX "Subject in Box 16" "Enter Subject ID:" "R7" %SubB16 
+NUMERICINPUTBOX "Weight for Box 16" "Enter weight (grams):" "436" %WeightB16 
+NUMERICINPUTBOX "Self-Administration Session" "Enter Training Day:" "8" %SessionB16 
+NUMERICINPUTBOX "Auto Shaping Timer" "Enter time between automatic rewards (s)" "60000" %ShapeTimeB16
+LOAD BOX 16 SUBJ %SubB16 EXPT OralFentSA GROUP One PROGRAM KC_Liq_SelfAdmin_Ext
+SET A(13) VALUE %ShapeTimeB16 MAINBOX 16 BOXES 16
+SET A(14) VALUE %WeightB16 MAINBOX 16 BOXES 16
+SET A(15) VALUE %SessionB16 MAINBOX 16 BOXES 16
