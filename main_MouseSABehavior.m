@@ -191,14 +191,9 @@ end
 %% Behavioral Economics Analysis 
 if any(ismember(runType, 'BE')) && run_BE_analysis
     fig_colors = {[.5,.5,.5], col_F_c57, col_M_c57, col_F_CD1, col_M_CD1};
-    BE_processes(mT(dex.BE, :), expKey, BE_intake_canonical_flnm, sub_dir, indivIntake_figs, ...
+    [beT, beiT] = BE_processes(mT(dex.BE, :), expKey, BE_intake_canonical_flnm, sub_dir, indivIntake_figs, ...
                  groupIntake_figs, saveTabs, fig_colors, indivIntakefigs_savepath, groupIntakefigs_savepath, ...
                  tabs_savepath, figsave_type);
-    % if firstHour
-    %     BE_processes(hmT(dex.BE, :), expKey, BE_intake_canonical_flnm, fH_sub_dir, indivIntake_figs, ...
-    %                  groupIntake_figs, saveTabs, indivIntakefigs_savepath, groupIntakefigs_savepath, ...
-    %                  tabs_savepath, figsave_type);
-    % end
 end
 
 %% Within Session Behavioral Analysis 
@@ -211,57 +206,182 @@ end
 %% Statistic Linear Mixed Effects Models
 statsname=[sub_dir, tabs_savepath, 'Oral SA Group Stats '];
 
-% Training
-data = mT(mT.sessionType == 'Training',:);
-dep_var = ["Intake", "EarnedInfusions", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
-lme_form = " ~ Sex*Session + (1|TagNumber)";
-      xlabel('Responses/mg/mL');
-            ylabel('Fentanyl Intake (μg/kg)');
-if ~isempty(data)
-    Training_LMEstats = getLMEstats(data, dep_var, lme_form);
-    if saveTabs
-        save([statsname, 'SA'], 'Training_LMEstats');
+% SA Acquitition All Animals with SA (Figure 1)
+if any(ismember(runType,'SA'))
+    data = mT(dex.SA,:);
+    data=data(data.Acquire == 'Acquire',:);
+    dep_var = ["Intake", "EarnedInfusions", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
+
+    if ismember('Strain', data.Properties.VariableNames) & ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Strain*Session + (1|TagNumber)" % Possibly ~ Sex*Strain*Session + (Session|TagNumber)"
+    elseif ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Session + (1|TagNumber)";
+    elseif ismember('Strain', data.Properties.VariableNames)
+        lme_form = " ~ Strain*Session + (1|TagNumber)";
+    end
+
+    if ~isempty(data)
+        Acq_LMEstats = getLMEstats(data, dep_var, lme_form);
+        if saveTabs
+            save([statsname, 'SA'], 'Acq_LMEstats');
+        end
     end
 end
 
+
 if any(ismember(runType,'ER'))
+    
+    % LMEs for Extinction and Reinstatment Experiment (Figure 2)
+    % Overall LMEs for Self Administration (not reported)
+    data = mT(dex.ER,:);
+    data=data(data.Acquire == 'Acquire',:);
+    data=data(data.Session<=15,:);
+    dep_var = ["Intake", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
 
-    % Extinction
-    data = mT(mT.sessionType=='Extinction',:);
-    dep_var = ["HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
-    lme_form = " ~ Sex*Session + (1|TagNumber)";
-    if ~isempty(data)
-        Extinction_LMEstats = getLMEstats(data, dep_var, lme_form);
+    if ismember('Strain', data.Properties.VariableNames) & ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Strain*Session + (1|TagNumber)"
+    elseif ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Session + (1|TagNumber)";
+    elseif ismember('Strain', data.Properties.VariableNames)
+        lme_form = " ~ Strain*Session + (1|TagNumber)";
     end
 
-    % Reinstatement
-    data = mT(mT.sessionType=='Reinstatement',:);
-    dep_var = ["HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
-    lme_form = " ~ Sex + (1|TagNumber)";
     if ~isempty(data)
-        Reinstatement_LMEstats = getLMEstats(data, dep_var, lme_form);
-    end
-    if saveTabs
-        if exist("Extinction_LMEstats", "var")
-            save([statsname, 'Extinction'], 'Extinction_LMEstats');
-        end
-        if exist("Reinstatement_LMEstats", "var")
-            save([statsname, 'Reinstatement'], 'Reinstatement_LMEstats');
-        end
-    end
-
-elseif any(ismember(runType,'BE'))
-
-    % BehavioralEconomics
-    data = mT(mT.sessionType=='BehavioralEconomics',:);
-    dep_var = ["Intake", "EarnedInfusions", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
-    lme_form = " ~ Sex + (1|TagNumber)";
-    if ~isempty(data)
-        BehavioralEconomics_LMEstats = getLMEstats(data, dep_var, lme_form);
+        ER_SA_LMEstats = getLMEstats(data, dep_var, lme_form);
         if saveTabs
-            save([statsname, 'BE'], 'BehavioralEconomics_LMEstats');
+            save([statsname, 'ER'], 'ER_SA_LMEstats');
         end
     end
+    
+    % Idividual Strains over Sessions & Session 15 Comparison (Figure 2)
+    if true
+        datac57=data(data.Strain=='c57',:);
+        dataCD1=data(data.Strain=='CD1',:);
+        lme_form = " ~ Sex*Session + (Session|TagNumber)";
+        ER_SA_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+        ER_SA_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+        save([statsname, 'ER'], 'ER_SA_c57_LMEstats');
+        save([statsname, 'ER'], 'ER_SA_CD1_LMEstats');
+        % Session 15
+        datac57=datac57(datac57.Session==15,:);
+        dataCD1=dataCD1(dataCD1.Session==15,:);
+        lme_form = " ~ Sex + (Session|TagNumber)";
+        ER_S15_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+        ER_S15_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+        save([statsname, 'ER'], 'ER_S15_c57_LMEstats');
+        save([statsname, 'ER'], 'ER_S15_CD1_LMEstats');
+    end
+
+    % Overall LMEs for Extinction (not reported)
+    data = mT(dex.ER,:);
+    data=data(data.Acquire == 'Acquire',:);
+    data=data(data.sessionType=='Extinction',:);
+    dep_var = ["HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
+
+    if ismember('Strain', data.Properties.VariableNames) & ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Strain*Session + (1|TagNumber)"
+    elseif ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Session + (1|TagNumber)";
+    elseif ismember('Strain', data.Properties.VariableNames)
+        lme_form = " ~ Strain*Session + (1|TagNumber)";
+    end
+
+    if ~isempty(data)
+        ER_Ext_LMEstats = getLMEstats(data, dep_var, lme_form);
+        if saveTabs
+            save([statsname, 'ER'], 'ER_Ext_LMEstats');
+        end
+    end
+
+    % Idividual Strains over Sessions Extinction (Figure 2)
+    if true
+        datac57=data(data.Strain=='c57',:);
+        dataCD1=data(data.Strain=='CD1',:);
+        lme_form = " ~ Sex*Session + (Session|TagNumber)";
+        ER_Ext_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+        ER_Ext_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+        save([statsname, 'ER'], 'ER_Ext_c57_LMEstats');
+        save([statsname, 'ER'], 'ER_Ext_CD1_LMEstats');
+    end
+
+
+  % Overall LMEs for Reinstatemet (not reported)
+    data = hmT(dex.ER,:);
+    data=data(data.Acquire == 'Acquire',:);
+    data=data(data.sessionType=='Reinstatement' | data.Session==25,:);
+    dep_var = ["HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
+
+    if ismember('Strain', data.Properties.VariableNames) & ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Strain*Session + (1|TagNumber)"
+    elseif ismember('Sex', data.Properties.VariableNames)
+        lme_form = " ~ Sex*Session + (1|TagNumber)";
+    elseif ismember('Strain', data.Properties.VariableNames)
+        lme_form = " ~ Strain*Session + (1|TagNumber)";
+    end
+
+    if ~isempty(data)
+        ER_Rei_LMEstats = getLMEstats(data, dep_var, lme_form);
+        if saveTabs
+            save([statsname, 'ER'], 'ER_Rei_LMEstats');
+        end
+    end
+
+    % Idividual Strains over Sessions Reinstatement (Figure 2)
+    if true
+        datac57=data(data.Strain=='c57',:);
+        dataCD1=data(data.Strain=='CD1',:);
+        lme_form = " ~ Sex*Session + (Session|TagNumber)";
+        ER_Rei_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+        ER_Rei_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+        save([statsname, 'ER'], 'ER_Rei_c57_LMEstats');
+        save([statsname, 'ER'], 'ER_Rei_CD1_LMEstats');
+        % Session 26
+        datac57=datac57(datac57.sessionType=='Reinstatement',:);
+        dataCD1=dataCD1(dataCD1.sessionType=='Reinstatement',:);
+        lme_form = " ~ Sex + (Session|TagNumber)";
+        ER_SR_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+        ER_SR_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+        save([statsname, 'ER'], 'ER_SR_c57_LMEstats');
+        save([statsname, 'ER'], 'ER_SR_CD1_LMEstats');
+    end
+
+end
+
+if any(ismember(runType,'BE'))
+    % Behavioral Economics SA Sessions
+    data = mT(dex.BE,:);
+    data=data(data.Acquire == 'Acquire',:);
+
+    % Individual Strain for SA (BE Experiment)
+    data=data(data.Session<=15,:);
+    dep_var = ["Intake", "EarnedInfusions", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
+    datac57=data(data.Strain=='c57',:);
+    dataCD1=data(data.Strain=='CD1',:);
+    lme_form = " ~ Sex*Session + (Session|TagNumber)";
+    BE_SA_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+    BE_SA_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+    save([statsname, 'BE'], 'BE_SA_c57_LMEstats');
+    save([statsname, 'BE'], 'BE_SA_CD1_LMEstats');
+    % Session 15
+    datac57=datac57(datac57.Session==15,:);
+    dataCD1=dataCD1(dataCD1.Session==15,:);
+    lme_form = " ~ Sex + (Session|TagNumber)";
+    BE_S15_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+    BE_S15_CD1_LMEstats = getLME
+
+     % Behavioral Economics BE Sessions
+    data = beT;
+    % Individual Strain for SA (BE Experiment)
+    data.Concentration=categorical(data.Concentration);
+    data.Concentration=reordercats(data.Concentration,["70","222","125","40","22"]);
+    dep_var = ["measuredIntake", "EarnedInfusions", "HeadEntries", "Latency", "ActiveLever", "InactiveLever"];
+    datac57=data(data.Strain=='c57',:);
+    dataCD1=data(data.Strain=='CD1',:);
+    lme_form = " ~ Sex*Concentration + (1|TagNumber)";
+    BE_BE_c57_LMEstats = getLMEstats(datac57, dep_var, lme_form);
+    BE_BE_CD1_LMEstats = getLMEstats(dataCD1, dep_var, lme_form);
+    save([statsname, 'BE'], 'BE_BE_c57_LMEstats');
+    save([statsname, 'BE'], 'BE_BE_CD1_LMEstats');
 end
 
 %% Individual Variability Suseptibility Modeling
@@ -324,10 +444,10 @@ if run_individualSusceptibility_analysis
                        violGroups, violLabels, pcaGroups, sub_dir, ...
                        saveTabs, tabs_savepath, groupOralFentOutput_figs, ...
                        groupOralFentOutput_savepath, figsave_type);
-    if firstHour
-        fH_ivT = IS_processes(hmT, dex, runType, corrGroups, violSubsets, ...
-                              violGroups, violLabels, pcaGroups, fH_sub_dir, ...
-                              saveTabs, tabs_savepath, groupOralFentOutput_figs, ...
-                              groupOralFentOutput_savepath, figsave_type);
-    end
+    % if firstHour
+    %     fH_ivT = IS_processes(hmT, dex, runType, corrGroups, violSubsets, ...
+    %                           violGroups, violLabels, pcaGroups, fH_sub_dir, ...
+    %                           saveTabs, tabs_savepath, groupOralFentOutput_figs, ...
+    %                           groupOralFentOutput_savepath, figsave_type);
+    % end
 end

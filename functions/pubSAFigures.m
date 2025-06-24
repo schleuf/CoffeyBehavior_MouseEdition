@@ -35,6 +35,25 @@ for rt = 1:length(runType)
         'GrammOptions', grammOptions{fnum}, 'ColorOptions', colorOptions{fnum}, ...
         'OrderOptions', orderOptions{fnum}, 'LegendOptions', legendOptions{fnum});
 
+    %% Earned Infusions All
+    fnum = 1;
+    figNames{fnum} = fullfile(figFold,[expStr, '_EarnedInfusionsAcquireVnonAquire']);
+    subset = {{'Acquire', {'Acquire','NonAcquire'}}};
+    subInds{fnum} = getSubInds(pT, subset);
+    yVars{fnum} = 'EarnedInfusions';
+    yLabs{fnum} = 'Earned Infusions';
+    cVars{fnum} = 'Strain';
+    grammOptions{fnum} = {'color', pT.Strain, 'lightness', pT.Acquire};
+    orderOptions{fnum} = {'color', {'c57', 'CD1'}, 'lightness', {'NonAcquire','Acquire'}};
+    legendOptions{fnum} = {'x','Strain'};
+    colorOptions{fnum} = {'hue_range',[25 385],'lightness_range',[95 60],'chroma_range',[50 70]};
+    donut{fnum} = false;
+    forceY{fnum} = false;
+
+    plotPubFig(pT, expStr, yVars{fnum}, yLabs{fnum}, forceY{fnum}, cVars{fnum}, subInds{fnum}, titles, figNames{fnum}, figsave_type, donut{fnum}, ...
+        'GrammOptions', grammOptions{fnum}, 'ColorOptions', colorOptions{fnum}, ...
+        'OrderOptions', orderOptions{fnum}, 'LegendOptions', legendOptions{fnum});
+
     %% C57 Active Lever, Acquirers
     fnum = 2;
     figNames{fnum} = fullfile(figFold,[expStr, '_ActiveLeverC57Acquire']);

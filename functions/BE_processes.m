@@ -1,4 +1,4 @@
-function BE_processes(mT, expKey, BE_intake_canonical_flnm, sub_dir, indivIntake_figs, groupIntake_figs, saveTabs, fig_colors, indivIntakefigs_savepath, groupIntakefigs_savepath, tabs_savepath, figsave_type)
+function [beT, beiT] = BE_processes(mT, expKey, BE_intake_canonical_flnm, sub_dir, indivIntake_figs, groupIntake_figs, saveTabs, fig_colors, indivIntakefigs_savepath, groupIntakefigs_savepath, tabs_savepath, figsave_type)
     
     [beT, beiT, BE_IndivFit, BE_GroupFit] = BE_Analysis(mT, expKey, BE_intake_canonical_flnm);
     
