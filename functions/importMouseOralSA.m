@@ -67,7 +67,13 @@ opts.Delimiter = [":", " ", "  ", "   ", "    ", "     ", "      ", "       ", "
 raw = readtable(filename, opts);
 
 %% Find all variables automatically calculated by MED-PC
+% Updating Date to Date-Time
+dte=raw.Var4(find(raw.Var1=="Start",1,'first'));
+tH=raw.Var4(find(raw.Var1=="Start",1,'last'));
+tM=raw.Var5(find(raw.Var1=="Start",1,'last'));
+tS=raw.Var6(find(raw.Var1=="Start",1,'last'));
 Date = datetime(raw.Var4(find(raw.Var1=="Start",1,'first')),'InputFormat','MM/dd/yy');
+DateTime = datetime(strcat(dte{1},"_",tH{1},"-",tM{1},"-",tS{1}),'InputFormat','MM/dd/yy_HH-mm-ss');
 Subject = categorical(raw.Var3(find(raw.Var1=="Subject",1,'first')));
 Weight = str2num(raw.Var8{find(raw.Var1=="A")+3}); % Animal Weight 
 Session = str2num(raw.Var4{find(raw.Var1=="A")+4}); % Session 
@@ -80,7 +86,7 @@ ActiveLever = str2num(raw.Var4{find(raw.Var1=="C")+3});
 InactiveLever = str2num(raw.Var5{find(raw.Var1=="C")+3});
 FileName = {filename};
 
-varTable = table(Subject,Session,Date,FileName,EarnedInfusions,TotalInfusions,HeadEntries,Latency,ActiveLever,InactiveLever,Weight);
+varTable = table(Subject,Session,Date,DateTime,FileName,EarnedInfusions,TotalInfusions,HeadEntries,Latency,ActiveLever,InactiveLever,Weight);
 
 %% Find Raw Event Array and Raw Timestamp Array
 eIDX=find(raw.Var1=="E");

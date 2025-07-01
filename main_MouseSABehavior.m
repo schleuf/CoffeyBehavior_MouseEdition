@@ -18,6 +18,7 @@ cd(main_folder)
 addpath(genpath(main_folder))
 masterTable_flnm = '.\data_masterTable.mat'; % the masterTable .mat file loaded in if createNewMasterTable == false
 beh_datapath = {'.\All Behavior'}; % Used to generate a new masterTable if createNewMasterTable == true
+roi_datapath = {'.\ROI Data'}; % Used to append ROI analysis to masterTable if addROI == true
 masterSheet_flnm = '.\Subject Key.xlsx'; % Key describing information specific to each animal
 BE_intake_canonical_flnm = '.\BE Measured Intake.xlsx'; % Data table for measured intake only used if runType == 'BE'
 experimentKey_flnm = '.\Experiment Key.xlsx'; % Key for date, session type, experiment type, drug concentration, dose.
@@ -33,6 +34,7 @@ acquisition_testPeriod = {'Training', 'last', 10}; % determines sessions to aver
 pAcq = true; % true: plot aquisition histogram to choose threshold 
 interpWeights = false; % true: interpolate daily weights from weekly weights
 interpWeight_sessions = [1,6,11,16,21]; % [sessions with true weights for interpolation]
+addROI = true; %true: append master table with ROI data - Requires ROI data sheets with "TagNumber" column and "Video" Column
 
 run_BE_analysis = true; % Run Behavioral Economics analysis?
 run_withinSession_analysis = true; % Run within-sessions analysis?
@@ -144,6 +146,11 @@ end
 % Get data from the first hour of the session 
 if firstHour
     hmT = getFirstHour(mT);
+end
+
+% Append master sheet with SIMBA ROI Data
+if addROI
+   mT = appendROI(mT,roi_datapath); 
 end
 
 %% get group statistics and save tables of data analyzed
