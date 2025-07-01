@@ -24,13 +24,14 @@ BE_intake_canonical_flnm = '.\BE Measured Intake.xlsx'; % Data table for measure
 experimentKey_flnm = '.\Experiment Key.xlsx'; % Key for date, session type, experiment type, drug concentration, dose.
 
 % MISC. SETTINGS
-runNum = '1_2_3_4_6'; % options: 'all' or desired runs separated by underscores. Must match numbers in Experiment Key (e.g. '1', '1_3_4', '3_2')
-runType = 'All'; % options: 'ER' (SA & Extinction & Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration), 'All' (All run seperately)
-createNewMasterTable = false; % true: generates & saves a new master table from medPC files in datapath. false: reads mT in from masterTable_flnm if set to false, otherwise 
+runNum = 'all'; % options: 'all' or desired runs separated by underscores. Must match numbers in Experiment Key (e.g. '1', '1_3_4', '3_2')
+runType = 'all'; % options: 'ER' (SA & Extinction & Reinstatement), 'BE' (Behavioral Economics), 'SA' (Self Administration), 'all' (All run seperately)
+createNewMasterTable = true; % true: generates & saves a new master table from medPC files in datapath. false: reads mT in from masterTable_flnm if set to false, otherwise 
 firstHour = true; % true: acquire data from the first-hour of data and analyze in addition to the full sessions (Important for camparing behavior to 1h reinstatement session).
 excludeData = true; % true: excludes data based on the 'RemoveSession' column of Subject Key
 acquisition_thresh = 10; % to be labeled as "Acquire", animal must achieve an average number of infusions in Training sessions greater than this threshold
 acquisition_testPeriod = {'Training', 'last', 10}; % determines sessions to average infusions across before applying acquisition_thresh. second value can be 'all', 'first', or 'last'. if 'first' or 'last', there should be a 3rd value giving the number of days to average across, or it will default to 1. 
+maxLatency = 360; % maximum time in seconds between an active lever press and head entry to be factored into latency calculations
 pAcq = true; % true: plot aquisition histogram to choose threshold 
 interpWeights = false; % true: interpolate daily weights from weekly weights
 interpWeight_sessions = [1,6,11,16,21]; % [sessions with true weights for interpolation]
@@ -43,7 +44,7 @@ run_individualSusceptibility_analysis = true; % Run individual risk analysis?
 % FIGURE OPTIONS
 % Currently, if figures are generated they are also saved. 
 saveTabs = true; % true: save matlab tables of analyzed datasets
-dailyFigs = false; % true: generate daily figures from dailySAFigures.m
+dailyFigs = true; % true: generate daily figures from dailySAFigures.m
 pubFigs = true; % true: generate publication figures from pubSAFigures.m
 indivIntake_figs = false; % true: generate figures for individual animal behavior across & within sessions (useful for troubleshooting but produces a lot of figures)
 groupIntake_figs = true; % true: generate figures grouped by sex, strain, etc. for animal behavior across & within sessions
@@ -80,7 +81,7 @@ dt = char(datetime('today')); % Used for Daily & Publication figure savefile nam
 
 runNum = categorical(string(runNum));
 runType = categorical(string(runType));
-if runType == 'All'
+if runType == 'all'
     runType = categorical(["ER", "BE", "SA"]);
 end
 
@@ -103,7 +104,7 @@ expKey = readtable(experimentKey_flnm);
 
 %% IMPORT DATA
 if createNewMasterTable
-    mT = createMasterTable(beh_datapath, masterSheet_flnm, experimentKey_flnm, 'data_masterTable');
+    mT = createMasterTable(beh_datapath, masterSheet_flnm, experimentKey_flnm, 'data_masterTable', maxLatency);
 else
     load(masterTable_flnm)
 end
@@ -145,7 +146,7 @@ end
 
 % Get data from the first hour of the session 
 if firstHour
-    hmT = getFirstHour(mT);
+    hmT = getFirstHour(mT, maxLatency);
 end
 
 % Append master sheet with SIMBA ROI Data

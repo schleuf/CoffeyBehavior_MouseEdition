@@ -1,4 +1,4 @@
-function [hmT] = getFirstHour(mT)
+function [hmT] = getFirstHour(mT, maxLatency)
     % 22: active lever 22
     % 23: inactive lever 23
     % 95: head entries 95
@@ -71,22 +71,18 @@ function [hmT] = getFirstHour(mT)
         rewHE = ET(EC==99);
         doseHE{fl} = mT.doseHE{fl}(1:length(rewHE)); 
 
-        if hmT.sessionType(fl) == 'Extinction'
-            EC = hmT.eventCode{fl};
-            ET = hmT.eventTime{fl};
-            actLP = ET(EC==22);
-            HE = ET(EC==95);
-            seekHE = arrayfun(@(x) find(HE > x, 1, 'first'), actLP, 'UniformOutput', false);
-            seekHE = HE(unique(cell2mat(seekHE(~cellfun(@isempty, seekHE)))));
-            seekLP = arrayfun(@(x) find(actLP < x, 1, 'last'), seekHE, 'UniformOutput', false);
-            seekLP = actLP(unique(cell2mat(seekLP(~cellfun(@isempty, seekLP)))));
-            allLatency{fl} = seekHE-seekLP;
-        else  
-            allLatency{fl} = mT.allLatency{fl}(1:length(rewHE));
-        end
-        
-        trimLatency=allLatency{fl};
-        Latency(fl) = mean(trimLatency(trimLatency<360)); % Setting Max Latency to 360s
+
+        EC = hmT.eventCode{fl};
+        ET = hmT.eventTime{fl};
+        actLP = ET(EC==22);
+        HE = ET(EC==95);
+        seekHE = arrayfun(@(x) find(HE > x, 1, 'first'), actLP, 'UniformOutput', false);
+        seekHE = HE(unique(cell2mat(seekHE(~cellfun(@isempty, seekHE)))));
+        seekLP = arrayfun(@(x) find(actLP < x, 1, 'last'), seekHE, 'UniformOutput', false);
+        seekLP = actLP(unique(cell2mat(seekLP(~cellfun(@isempty, seekLP)))));
+        allLatency{fl} = seekHE - seekLP;
+        allLatency{fl} = allLatency{fl}(allLatency{fl} <= maxLatency);
+        Latency(fl) = mean(allLatency{fl});
      
         if mT.TotalInfusions(fl) == 0
             totalIntake(fl) = 0;
