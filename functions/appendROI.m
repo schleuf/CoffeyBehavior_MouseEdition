@@ -24,13 +24,15 @@ for i = 1:length(roiFiles)
     roiData = readtable(fullfile(roi_datapath{1}, roiFiles(i).name));
     combinedROI = [combinedROI; roiData]; % Append the data to the combined table
 end
-combinedROI.TagNumber=categorical(combinedROI.TagNumber);
-
-%Remove Var1 from combinedROI
+%Remove Var1 from combinedROI if it exists
 try
 combinedROI.Var1=[];
 catch
 end
+
+% Convert combinedROI.TagNumber to categorical and variable 3 though end from cell to double
+combinedROI.TagNumber = categorical(combinedROI.TagNumber); % Convert TagNumber to categorical
+combinedROI{:, 3:end} = cellfun(@str2double, combinedROI{:, 3:end}, 'UniformOutput', false);
 
 % Extract Date and Time from video variable
 videoDateTime = extractBetween(combinedROI.video, 2, 20); % Extract date substring

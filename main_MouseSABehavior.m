@@ -140,20 +140,19 @@ else
 end
 
 % Weight Interpolation
-if interpWeights
+if interpWeights & createNewMasterTable
     mT = interpoweight(mT, interpWeight_sessions);
+end
+
+% Append master sheet with SIMBA ROI Data
+if addROI & createNewMasterTable
+   mT = appendROI(mT,roi_datapath); 
 end
 
 % Get data from the first hour of the session 
 if firstHour
     hmT = getFirstHour(mT, maxLatency);
 end
-
-% Append master sheet with SIMBA ROI Data
-if addROI
-   mT = appendROI(mT,roi_datapath); 
-end
-
 %% get group statistics and save tables of data analyzed
 groupStats = struct;
 if firstHour; hour_groupStats = struct; end
