@@ -64,6 +64,47 @@ Run:
 
 ## Implement in Your Lab
 ### Hardware Setup
+#### Single Chambe Parts List
+|     Description       |     Manufacturer    |     Part #    |
+|---|---|---|
+|     Outer Cabinet   (1 chamber)    |     SUNCAST    |     BMCCPD3000    |
+|     Outer Cabinet   (3 chamber)    |     SUNCAST    |     BMCCPD8004    |
+|     Acoustic Isolation   Foam    |     Auralex    |     PYRAMIDCHA    |
+|     Camera    |     Arducam    |     B0506    |
+|     Microphone    |     Pettersson   Elektronik    |     M500-384    |
+|     Modular Test   Chamber Mouse    |     Med-Associates    |     ENV-307A    |
+|     Stainless Steel Floor    |     Med-Associates    |     ENV-307A-GFW    |
+|     House Light   (classic)    |     Med-Associates    |     ENV-315M-LED    |
+|     House Light (red)    |     Med-Associates    |     ENV-315M-LED    |
+|     Retractable   Lever (classic) x2    |     Med-Associates    |     ENV-312-3M    |
+|     Stimulus   Light (classic) x2    |     Med-Associates    |     ENV-321M-LED    |
+|     Liquid   Delivery Receptacle (tall)    |     Med-Associates    |     ENV-303LPHD-4.25    |
+|     Syringe Pump   (3.33RPM)    |     Med-Associates    |     PHM-200    |
+|     Head Entry   Detector    |     Med-Associates    |     ENV-254-FB    |
+|     SmartCtrl   Card    |     Med-Associates    |     DIG-716P1    |
+|     SmartCtrl Panel    |     Med-Associates    |     SG-716B    |
+|     Tone Generator    |     Med-Associates    |     ENV-323AM    |
+|     Angled Top    |     3D Printed    |     \3D Printed   Parts    |
+
+#### Chamber Wiring
+ |     Med-PC #     |     Description    |     Note    |
+|---|---|---|
+|     Output 1    |     Left Lever Out    |     Active Lever    |
+|     Output 2    |     Right Lever Out     |     Optional (Not used in our setup)    |
+|     Output 3    |     House Light On    |     Optional   (Not used in our setup)    |
+|     Output 4    |     Red House Light On    |     Optional   (Not used in our setup)    |
+|     Output 5    |     Left Lever Light    |     Active Lever Stimulus Light    |
+|     Output 6    |     Tone On    |     Active   Lever Press Stimulus Tone    |
+|     Output 7    |     Right Lever Light    |     Optional   (Not used in our setup)    |
+|     Output 8    |     Pump On    |     Liquid Delivery Pump    |
+|     Input 1    |     Left Lever In    |     Active Laver    |
+|     Input 2    |     Right Lever In    |     Optional (Not used in our setup)    |
+|     Input 3    |     Inactive Lever In    |     Non-Retractable Inactive Lever    |
+|     Input 4    |     Beam Break In    |     Head Entry Detector for Liquid   Port    |
+
+#### Top Down Chamber View
+![Image](https://github.com/user-attachments/assets/2a773dc3-c9aa-4b2a-94b2-d0cb32a875b6)
+
 ### MED Software Setup
 ### MATLAB Software Setup
 ### Detailed Behaivor Protocol
