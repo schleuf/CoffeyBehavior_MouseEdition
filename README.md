@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <h3 align="center">A robust and convenient framework for studying the neurobiological substrates underlying individual[ta1.1][mr1.2][ta1.3], strain, and sex differences in fentanyl use disorder in mice</h3>
+  <h3 align="center">A robust and convenient framework for studying the neurobiological substrates underlying individual, strain, and sex differences in fentanyl use disorder in mice</h3>
 </div>
 
 <!-- ABOUT THE PROJECT -->
